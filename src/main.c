@@ -1,58 +1,81 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: noamfavier <nfavier@student.42.fr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/24 02:12:19 by noamfavier        #+#    #+#             */
+/*   Updated: 2026/06/24 02:13:50 by noamfavier       ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-char *exec(char *line) {
-    char *token, *Token[64];
-    int i = 0;
-    token = strtok(line, " ");
-    do {
-        Token[i] = token;
-        i++;
-    } while ((token = strtok(NULL, " ")));
-
-    Token[i] = NULL;
-
-    pid_t child = fork();
-
-    if (child == -1) {
-        perror("fork");
-        return NULL;
-    }
-
-    char *command = Token[0];
-
-    if (child == 0) {
-        int status_code = execvp(command, Token);
-
-        perror("execvp");
-
-        return NULL;
-    } else {
-        waitpid(child, NULL, 0);
-    }
-
-    return *Token;
+static void	run_child(char **args)
+{
+	execvp(args[0], args);
+	perror("execvp");
 }
 
-int main() {
+static char	*fork_and_wait(char **args)
+{
+	pid_t	child;
 
-    char line[1024];
-    printf("Welcome to Oh-my-gosh");
+	child = fork();
+	if (child == -1)
+	{
+		perror("fork");
+		return (NULL);
+	}
+	if (child == 0)
+		run_child(args);
+	else
+		waitpid(child, NULL, 0);
+	return (args[0]);
+}
 
-    while (1) {
+static void	tokenize(char *line, char **args)
+{
+	char	*token;
+	int		i;
 
-        printf(">$ ");
-        fgets(line, 1024, stdin);
+	i = 0;
+	token = strtok(line, " ");
+	while (token)
+	{
+		args[i] = token;
+		i++;
+		token = strtok(NULL, " ");
+	}
+	args[i] = NULL;
+}
 
-        line[strlen(line) - 1] = '\0';
+static char	*run_cmd(char *line)
+{
+	char	*args[64];
 
-        if (!strcmp(line, "exit")) {
-            exit(0);
-        }
+	tokenize(line, args);
+	return (fork_and_wait(args));
+}
 
-        exec(line);
-    }
+int	main(void)
+{
+	char	line[1024];
+
+	printf("Welcome to Oh-my-gosh\n");
+	while (1)
+	{
+		printf(">$ ");
+		fgets(line, 1024, stdin);
+		line[strlen(line) - 1] = '\0';
+		if (!strcmp(line, "exit"))
+			exit(0);
+		run_cmd(line);
+	}
+	return (0);
 }
