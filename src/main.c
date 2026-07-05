@@ -53,7 +53,7 @@ static char	*run_cmd(char *line)
 
 int	main(void)
 {
-	char	line[1024];
+	char line[1024];
 
 	printf("Welcome to Oh-my-gosh\n");
 	while (1)
