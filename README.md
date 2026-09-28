@@ -7,7 +7,7 @@
 <br>
 
 [![C](https://img.shields.io/badge/C-A8B9CC?style=for-the-badge&logo=c&logoColor=black&labelColor=0D1117)](https://en.wikipedia.org/wiki/C_(programming_language))
-[![License](https://img.shields.io/badge/MIT-00D9FF?style=for-the-badge&labelColor=0D1117)](./LICENSE)
+[![License](https://img.shields.io/badge/Apache%202.0-00D9FF?style=for-the-badge&labelColor=0D1117)](./LICENSE)
 
 </div>
 
